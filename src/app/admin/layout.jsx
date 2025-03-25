@@ -1,6 +1,6 @@
 import React from "react"
 import { Sidebar } from "@/components/sidebar"
-import { Header } from "@/components/header"
+import { Header } from "@/components/admin-header"
 
 export default function DashboardLayout({
   children,

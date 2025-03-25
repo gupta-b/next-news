@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Menu, Bell, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,6 +27,16 @@ export function Header() {
           <Bell className="h-5 w-5" />
           <span className="sr-only">Notifications</span>
         </Button>
+        <nav className="flex items-center space-x-2">
+          <Link href="/auth/login">
+            <Button variant="ghost" size="sm">
+              Login
+            </Button>
+          </Link>
+          <Link href="/auth/signup">
+            <Button size="sm">Sign Up</Button>
+          </Link>
+        </nav>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
