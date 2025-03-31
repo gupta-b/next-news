@@ -19,11 +19,6 @@ export function ClientSidebar() {
 
   const menuItems = [
     {
-      title: "Dashboard",
-      href: "/dashboard",
-      icon: Home,
-    },
-    {
       title: "Users",
       href: "/dashboard/users",
       icon: Users,
