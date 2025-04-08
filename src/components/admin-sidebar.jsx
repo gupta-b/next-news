@@ -20,37 +20,37 @@ export function AdminSidebar() {
   const menuItems = [
     {
       title: "Dashboard",
-      href: "/dashboard",
+      href: "/admin/dashboard",
       icon: Home,
     },
     {
       title: "Users",
-      href: "/dashboard/users",
+      href: "/admin/users",
       icon: Users,
     },
     {
       title: "Roles",
-      href: "/dashboard/roles",
+      href: "/admin/roles",
       icon: ShieldCheck,
     },
     {
       title: "Contacts",
-      href: "/dashboard/contacts",
+      href: "/admin/contacts",
       icon: Mail,
     },
     {
       title: "Posts",
-      href: "/dashboard/posts",
+      href: "/admin/posts",
       icon: FileText,
     },
     {
       title: "Analytics",
-      href: "/dashboard/analytics",
+      href: "/admin/analytics",
       icon: BarChart3,
     },
     {
       title: "Settings",
-      href: "/dashboard/settings",
+      href: "/admin/settings",
       icon: Settings,
     },
   ]
@@ -58,7 +58,7 @@ export function AdminSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="border-b p-4">
-        <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
+        <Link href="/admin/dashboard" className="flex items-center gap-2 font-semibold">
           <span className="text-xl">Admin Dashboard</span>
         </Link>
       </SidebarHeader>

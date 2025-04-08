@@ -1,7 +1,31 @@
+"use client"
+
+import React, { useEffect, useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, UserCog, Contact, FileText } from "lucide-react"
 
-export default function DashboardPage() {
+export default function DashboardPage() {  
+  const [userCount, setUserCount] = useState(0);
+
+  const fetchNumberOfUser = useCallback(
+    async (refresh = false) => {
+      try {
+        const response = await axios.get('/api/users');
+        console.log(response)
+        setUserCount(response.data.messages || 0);
+      } catch (error) {
+        const axiosError = error;
+        
+      } finally {
+        
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    fetchNumberOfUser();
+  }, []);
   return (
     <div className="grid gap-4 md:gap-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
