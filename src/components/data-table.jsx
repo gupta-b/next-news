@@ -117,7 +117,7 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
-      {/* {hasMore && (
+      {hasMore && (
         <div ref={loaderRef} className="flex justify-center py-4">
           {isLoading && (
             <Button disabled variant="outline">
@@ -126,7 +126,7 @@ export function DataTable({
             </Button>
           )}
         </div>
-      )} */}
+      )}
     </div>
   )
 }

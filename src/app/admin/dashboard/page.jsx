@@ -1,21 +1,66 @@
 "use client"
 
-import React, { useEffect, useState, useCallback } from "react"
+import React, { useEffect, useCallback, useReducer } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Users, UserCog, Contact, FileText } from "lucide-react"
+import axios from 'axios';
+
+// import { dashBoardReducer, initialObj } from './dashboardReducer.js';
+
+const dashBoardReducer = (state, action) => {
+  const total = action?.payload?.data?.pagination?.total;
+  const page = action?.payload?.data?.pagination?.page;
+  switch (action.type) {
+    case "GET_USER":
+      return {
+        ...state,
+        user: {
+          page,
+          total,
+          list: action?.payload?.data?.users, 
+        }
+      }
+    case "GET_CONTACT":
+      return {
+        ...state,
+        contact: {
+          page,
+          total,
+          list: action?.payload?.data?.contacts
+        }
+      }
+      
+    default:
+      return state;
+  }
+};;
+const initialObj = {
+  "user": {
+    page: 0,
+    total: 0,
+    list: []
+   },
+   "contact": {
+     page: 0,
+     total: 0,
+     list: []
+    }
+};
+
 
 export default function DashboardPage() {  
-  const [userCount, setUserCount] = useState(0);
-
-  const fetchNumberOfUser = useCallback(
+  // const [userCount, setUserCount] = useState(0);
+  const [dashboardState, dispatch] = useReducer(dashBoardReducer, initialObj);
+  const fetchApis = useCallback(
     async (refresh = false) => {
       try {
-        const response = await axios.get('/api/users');
-        console.log(response)
-        setUserCount(response.data.messages || 0);
+        const user = await axios.get('/api/users');
+        dispatch({type: "GET_USER", payload: user});
+        const contact = await axios.get('/api/contacts');
+        dispatch({type: "GET_CONTACT", payload: contact});
       } catch (error) {
         const axiosError = error;
-        
+        console.log('\x1b[36m%s\x1b[0m', axiosError);
       } finally {
         
       }
@@ -24,7 +69,7 @@ export default function DashboardPage() {
   );
 
   useEffect(() => {
-    fetchNumberOfUser();
+    fetchApis();
   }, []);
   return (
     <div className="grid gap-4 md:gap-6">
@@ -35,7 +80,7 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
+            <div className="text-2xl font-bold">{dashboardState.user.total}</div>
             <p className="text-xs text-muted-foreground">+12% from last month</p>
           </CardContent>
         </Card>
@@ -55,7 +100,7 @@ export default function DashboardPage() {
             <Contact className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">573</div>
+            <div className="text-2xl font-bold">{dashboardState.contact.total}</div>
             <p className="text-xs text-muted-foreground">+8% from last month</p>
           </CardContent>
         </Card>

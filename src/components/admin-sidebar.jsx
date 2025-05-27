@@ -34,6 +34,11 @@ export function AdminSidebar() {
       icon: ShieldCheck,
     },
     {
+      title: "Articles",
+      href: "/admin/articles",
+      icon: ShieldCheck,
+    },
+    {
       title: "Contacts",
       href: "/admin/contacts",
       icon: Mail,

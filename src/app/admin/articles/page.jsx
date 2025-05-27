@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect, useReducer, useCallback } from "react"
-import axios from "axios";
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { DataTable } from "@/components/data-table"
 import { Button } from "@/components/ui/button"
@@ -28,87 +27,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 // }
 
 // Generate mock data
-const contactReducer = (state, action) => {
-  const pagination = action?.payload?.data?.pagination;
-  switch (action.type) {
-    case "START_LOADING":
-      return {
-        ...state,
-        contact: {
-          ...state.contact,
-          isLoading: true
-        }
-      }
-    case "GET_MORE_CONTACTS": 
-      const prevContact = state.contact;
-      if (prevContact.page < pagination.page) {
-        const newList = state.contact.list.concat(action?.payload?.data?.contacts)
-        return {
-          ...state,
-          contact: {
-            ...pagination,
-            isLoading: false,
-            list: newList
-  
-          }
-        }
-      } else {
-        return state;
-      }
-        
-    case "GET_CONTACT":
-      return {
-        ...state,
-        contact: {
-          ...pagination,
-          isLoading: false,
-          list: action?.payload?.data?.contacts
-        }
-      }
-      
-    default:
-      return state;
-  }
-};;
-const initialContactObj = {
-   "contact": {
-      isLoading: true,
-      page: 0,
-      total: 0,
-      hasMore: false,
-      list: []
-    }
-};
+const generateMockContacts = (count, startIndex = 0) => {
+  return Array.from({ length: count }).map((_, i) => ({
+    id: `CNT${(startIndex + i + 1).toString().padStart(5, "0")}`,
+    name: `Contact ${startIndex + i + 1}`,
+    email: `contact${startIndex + i + 1}@example.com`,
+    phone: `+1 ${Math.floor(Math.random() * 900 + 100)}-${Math.floor(
+      Math.random() * 900 + 100,
+    )}-${Math.floor(Math.random() * 9000 + 1000)}`,
+    company: `Company ${Math.floor(Math.random() * 20) + 1}`,
+    title: ["CEO", "CTO", "CFO", "Manager", "Developer", "Designer"][Math.floor(Math.random() * 6)],
+    createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
+  }))
+}
+
 export default function ContactsPage() {
   const router = useRouter()
-  const [contactState, dispatch] = useReducer(contactReducer, initialContactObj);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [contacts, setContacts] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
 
-  const fetchNumberOfContacts = useCallback(
-    async (refresh = false) => {
-    try {
-      const contact = await axios.get('/api/contacts');
-      dispatch({type: "GET_CONTACT", payload: contact});
-    } catch (error) {
-      const axiosError = error;
-      console.log('\x1b[36m%s\x1b[0m', axiosError);
-    } finally {
-      
-    }
-  }, []);
-
-  const fetchMoreNumberOfContacts = async (pageNumber) => {
-    try {
-      const contact = await axios.get(`/api/contacts?page=${pageNumber}`);
-      dispatch({type: "GET_MORE_CONTACTS", payload: contact});
-    } catch (error) {
-      const axiosError = error;
-      console.log('\x1b[36m%s\x1b[0m', axiosError);
-    } finally {
-      
-    }
-  };
-  
   // Columns definition
   const columns = [
     {
@@ -195,7 +135,7 @@ export default function ContactsPage() {
                   // Handle delete
                   if (confirm(`Are you sure you want to delete ${contact.name}?`)) {
                     // Delete logic would go here
-                    // setContacts((prev) => prev.filter((c) => c.id !== contact.id))
+                    setContacts((prev) => prev.filter((c) => c.id !== contact.id))
                   }
                 }}
               >
@@ -211,16 +151,21 @@ export default function ContactsPage() {
 
   // Load initial data
   useEffect(() => {
-    fetchNumberOfContacts();
+    setContacts(generateMockContacts(20))
   }, [])
 
   // Handle load more
   const handleLoadMore = () => {
-    console.log("start")
-    dispatch({type: "START_LOADING"});
+    setIsLoading(true)
     // Simulate API call
     setTimeout(() => {
-      fetchMoreNumberOfContacts(contactState.contact.page + 1);
+      if (page < 5) {
+        setContacts((prev) => [...prev, ...generateMockContacts(20, page * 20)])
+        setPage((prev) => prev + 1)
+      } else {
+        setHasMore(false)
+      }
+      setIsLoading(false)
     }, 1000)
   }
 
@@ -228,8 +173,9 @@ export default function ContactsPage() {
   const handleSearch = (value) => {
     setSearchTerm(value)
     if (value.trim() === "") {
-      // setContacts(generateMockContacts(20))
+      setContacts(generateMockContacts(20))
       setPage(1)
+      setHasMore(true)
     } else {
       // Simulate search
       const filtered = generateMockContacts(100).filter(
@@ -238,7 +184,8 @@ export default function ContactsPage() {
           contact.email.toLowerCase().includes(value.toLowerCase()) ||
           contact.company.toLowerCase().includes(value.toLowerCase()),
       )
-      // setContacts(filtered.slice(0, 20))
+      setContacts(filtered.slice(0, 20))
+      setHasMore(filtered.length > 20)
     }
   }
 
@@ -246,7 +193,7 @@ export default function ContactsPage() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Contacts</CardTitle>
-        <Button onClick={() => router.push("/admin/contacts/new")}>
+        <Button onClick={() => router.push("/dashboard/contacts/new")}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Add Contact
         </Button>
@@ -254,9 +201,9 @@ export default function ContactsPage() {
       <CardContent>
         <DataTable
           columns={columns}
-          data={contactState.contact.list}
-          isLoading={contactState.contact.isLoading}
-          hasMore={contactState.contact.hasMore}
+          data={contacts}
+          isLoading={isLoading}
+          hasMore={hasMore}
           onLoadMore={handleLoadMore}
           searchPlaceholder="Search contacts..."
           onSearch={handleSearch}

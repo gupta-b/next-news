@@ -5,15 +5,12 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-// import { toast } from "@/components/ui/use-toast"
-
-const phoneRegex = /^(\+1\s?)?(\(?\d{3}\)?[\s.-]?)?\d{3}[\s.-]?\d{4}$/;
+import { toast } from "@/components/ui/use-toast"
 
 // Form schema
 const formSchema = z.object({
@@ -23,15 +20,15 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  phone: z.string().regex(phoneRegex, {
-    message: "Please enter a valid phone address.",
+  role: z.string({
+    required_error: "Please select a role.",
   }),
   status: z.enum(["active", "inactive"], {
     required_error: "Please select a status.",
   }),
 })
 
-export default function NewContactPage() {
+export default function NewUserPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -41,35 +38,30 @@ export default function NewContactPage() {
     defaultValues: {
       name: "",
       email: "",
-      phone: "",
+      role: "",
       status: "active",
     },
   })
 
   // Form submission handler
-  async function onSubmit(values) {
+  function onSubmit(values) {
     setIsSubmitting(true)
-    try {
-      await axios.post('/api/contacts', values)
-      router.push("/admin/contacts")
 
-    } catch (error) {
-      console.error('Insert failed:', error);
-    }
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false)
-      // toast({
-      //   title: "User created",
-      //   description: `${values.name} has been created successfully.`,
-      // })
+      toast({
+        title: "User created",
+        description: `${values.name} has been created successfully.`,
+      })
+      router.push("/dashboard/users")
     }, 1000)
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Add New Contact</CardTitle>
+        <CardTitle>Add New User</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -104,24 +96,55 @@ export default function NewContactPage() {
             />
             <FormField
               control={form.control}
-              name="phone"
+              name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>phone</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the user's phone address.</FormDescription>
+                  <FormLabel>Role</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Admin">Admin</SelectItem>
+                      <SelectItem value="Editor">Editor</SelectItem>
+                      <SelectItem value="Viewer">Viewer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Select the user's role in the system.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Set the user's account status.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <div className="flex items-center justify-end gap-4">
-              <Button type="button" variant="outline" onClick={() => router.push("/admin/contacts")}>
+              <Button type="button" variant="outline" onClick={() => router.push("/dashboard/users")}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create contact"}
+                {isSubmitting ? "Creating..." : "Create User"}
               </Button>
             </div>
           </form>

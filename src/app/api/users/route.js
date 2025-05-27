@@ -27,14 +27,15 @@ export async function GET(request) {
 
     // Get articles
     const users = await User.find(query).sort({ publishedAt: -1 }).skip(skip).limit(limit)
-
+    const pages = Math.ceil(total / limit);
     return NextResponse.json({
-      articles,
+      users,
       pagination: {
         total,
         page,
         limit,
-        pages: Math.ceil(total / limit),
+        hasMore: (page !== pages),
+        pages
       },
     })
   } catch (error) {
