@@ -26,7 +26,7 @@ export async function GET(request) {
     const total = await Contact.countDocuments(query)
 
     // Get articles
-    const contacts = await Contact.find(query).sort({ publishedAt: -1 }).skip(skip).limit(limit)
+    const contacts = await Contact.find(query).sort({ updatedAt: -1 }).skip(skip).limit(limit)
     const pages = Math.ceil(total / limit);
     return NextResponse.json({
       contacts,
@@ -52,7 +52,7 @@ export async function POST(request) {
       name: body.name || "",
       email: body.email || "",
       phone: body.phone || "",
-      status: body.status || "draft",
+      status: body.status || "draft"
     }
 
     console.log(newContact)
@@ -61,6 +61,7 @@ export async function POST(request) {
     newContact._id = result._id;
     return NextResponse.json(result, { status: 201 })
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: "Failed to create contact" }, { status: 500 })
   }
 }
