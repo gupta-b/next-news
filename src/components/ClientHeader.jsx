@@ -17,6 +17,8 @@ import { NewsCategorySelector } from "@/components/news-category-selector"
 import { LanguageSelector } from "@/components/language-selector"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
+import GoogleLogin from "./GoogleLogin";
+
 export default function ClientHeader() {
   const { t } = useTranslation()
   // const { toggle } = useSidebar()
@@ -32,11 +34,8 @@ export default function ClientHeader() {
           <span className="sr-only">Notifications</span>
         </Button>
         <nav className="flex items-center space-x-2">
-          <Link href="/auth/login">
-            <Button variant="ghost" size="sm">
-              Login
-            </Button>
-          </Link>
+          {/* <button onClick={() => signIn("google")}>G-Login</button> */}
+          <GoogleLogin />
           <Link href="/auth/signup">
             <Button size="sm">Sign Up</Button>
           </Link>
