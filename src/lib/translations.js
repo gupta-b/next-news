@@ -31,7 +31,7 @@ export const translations = {
     by: "By",
     selectNewsCategory: "Select News Type"
   },
-  es: {
+  hi: {
     appName: "NoticiasApp",
     home: "Inicio",
     politics: "Política",
@@ -59,7 +59,7 @@ export const translations = {
     by: "Por",
     selectNewsCategory: "Select News Type"
   },
-  fr: {
+  guj: {
     appName: "ActuApp",
     home: "Accueil",
     politics: "Politique",
@@ -86,62 +86,6 @@ export const translations = {
     selectTrending: "Sélectionnez un article tendance",
     by: "Par",
     selectNewsCategory: "Select News Type"
-  },
-  de: {
-    appName: "NachrichtenApp",
-    home: "Startseite",
-    politics: "Politik",
-    technology: "Technologie",
-    business: "Wirtschaft",
-    sports: "Sport",
-    entertainment: "Unterhaltung",
-    trending: "Trends",
-    selectLanguage: "Sprache auswählen",
-    readMore: "Weiterlesen",
-    selectArticle: "Wählen Sie einen Artikel",
-    clickToView: "Klicken Sie auf einen Nachrichtenartikel, um die Details hier zu sehen",
-    noMoreNews: "Keine weiteren Nachrichten zum Laden",
-    loading: "Weitere Nachrichten werden geladen...",
-
-    today: "Heute",
-    yesterday: "Gestern",
-    olderNews: "Ältere Nachrichten",
-    at: "um",
-
-    todaysTrending: "Heutige Trends",
-    yesterdaysTrending: "Gestrige Trends",
-    noMoreTrending: "Keine weiteren Trend-Nachrichten zum Laden",
-    selectTrending: "Wählen Sie einen Trend-Artikel",
-    by: "Von",
-    selectNewsCategory: "Select News Type"
-  },
-  zh: {
-    appName: "新闻应用",
-    home: "首页",
-    politics: "政治",
-    technology: "科技",
-    business: "商业",
-    sports: "体育",
-    entertainment: "娱乐",
-    trending: "热门",
-    selectLanguage: "选择语言",
-    readMore: "阅读更多",
-    selectArticle: "选择一篇文章",
-    clickToView: "点击任何新闻文章在此处查看详情",
-    noMoreNews: "没有更多新闻可加载",
-    loading: "正在加载更多新闻...",
-
-    today: "今天",
-    yesterday: "昨天",
-    olderNews: "较早新闻",
-    at: "于",
-
-    todaysTrending: "今日热门",
-    yesterdaysTrending: "昨日热门",
-    noMoreTrending: "没有更多热门新闻可加载",
-    selectTrending: "选择一篇热门文章",
-    by: "作者",
-    selectNewsCategory: "Select News Type"
-  },
+  }
 }
 

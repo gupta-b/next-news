@@ -1,5 +1,6 @@
 https://www.youtube.com/watch?v=XQbiMiNah0o
 
+npx shadcn@latest add popover
 
 
 
