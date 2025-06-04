@@ -11,9 +11,7 @@ async function dbConnect() {
 
   try {
     // Attempt to connect to the database
-    const db = await mongoose.connect(process.env.MONGODB_URI || '', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true});
+    const db = await mongoose.connect(process.env.MONGODB_URI || '');
 
     connection.isConnected = db.connections[0].readyState;
 

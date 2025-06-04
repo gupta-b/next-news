@@ -1,36 +1,43 @@
 import mongoose, { Schema } from "mongoose"
 
 // export interface IArticle extends Document {
-//   title: string
-//   excerpt: string
-//   content: string
-//   author: string
-//   source: string
-//   publishedAt: Date
-//   imageUrl: string
-//   category: string
-//   trending: boolean
-//   trendingRank?: number
-//   createdAt: Date
-//   updatedAt: Date
+//   titleEn: body.titleEn || "",
+    // titleEHi: body.titleEHi || "",
+    // titleGuj: body.titleGuj || "",
+    // category: body.category || "",
+    // URLs: body.URLs || [],
+    // hashtags: body.hashtags || [],
+    // langCheck: body.langCheck || ['en', 'hi', 'guj'],
+    // status: body.status || "draft",
+    // bodyEn: body.bodyEn || "",
+    // bodyHi: body.bodyHi || "",
+    // bodyGuj: body.bodyGuj || "",
+    // category: body.category || "",
+    // fromDate: body.fromDate || new Date(),
+    // toDate: body.toDate || new Date(),
 // }
 
 const ArticleSchema = new Schema(
   {
-    title: { type: String, required: true },
-    excerpt: { type: String, required: true },
-    content: { type: String, required: true },
-    author: { type: String, required: true },
-    source: { type: String, required: true },
-    publishedAt: { type: Date, required: true, default: Date.now },
-    imageUrl: { type: String, required: true },
+    titleEn: { type: String, required: true },
+    titleHi: { type: String, required: true },
+    titleGuj: { type: String, required: true },
+    URLs: { type: Array, required: true },
+    hashtags: { type: Array, required: true },
+    langCheck: { type: Array, required: true },
+    status: { type: String, required: true },
+    bodyEn: { type: String, required: true },
+    bodyHi: { type: String, required: true },
+    bodyGuj: { type: String, required: true },
     category: { type: String, required: true },
-    trending: { type: Boolean, default: false },
+    fromDate: { type: String, required: true },
+    fromDate: { type: Date, required: true, default: Date.now },
+    toDate: { type: Date, required: true, default: Date.now },
     trendingRank: { type: Number },
   },
-  {
-    timestamps: true,
-  },
+  // {
+  //   timestamps: true,
+  // },
 )
 
 // Prevent multiple models from being created

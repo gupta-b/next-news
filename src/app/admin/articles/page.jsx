@@ -87,7 +87,7 @@ export default function ArticlesPage() {
     }
   }, []);
 
-  const fetchMoreNumberOfARTICLEs = async (pageNumber) => {
+  const fetchMoreNumberOfArticles = async (pageNumber) => {
     try {
       const article = await axios.get(`/api/articles?page=${pageNumber}`);
       dispatch({type: "GET_MORE_ARTICLES", payload: article});
@@ -102,8 +102,28 @@ export default function ArticlesPage() {
   // Columns definition
   const columns = [
     {
-      accessorKey: "name",
-      header: "Name",
+      accessorKey: "titleEn",
+      header: "titleEn",
+    },
+    {
+      accessorKey: "titleHi",
+      header: "titleHi",
+    },
+    {
+      accessorKey: "titleGuj",
+      header: "titleGuj",
+    },
+    {
+      accessorKey: "category",
+      header: "category",
+    },
+    {
+      accessorKey: "hashtags",
+      header: "hashtags",
+    },
+    {
+      accessorKey: "URLs",
+      header: "URLs",
     },
     {
       accessorKey: "email",

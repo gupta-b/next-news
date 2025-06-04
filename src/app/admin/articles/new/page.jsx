@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import axios from "axios"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -33,14 +34,14 @@ const formSchema = z.object({
     .min(5, {
       message: "Title must be at least 5 characters.",
     }),
-  titleHi: z
-    .string()
-    .max(100, {
-      message: "Title must not be more than 100 characters.",
-    })
-    .min(5, {
-      message: "Title must be at least 5 characters.",
-    }), 
+  // titleHi: z
+  //   .string()
+  //   .max(100, {
+  //     message: "Title must not be more than 100 characters.",
+  //   })
+  //   .min(5, {
+  //     message: "Title must be at least 5 characters.",
+  //   }).optional(), 
   titleGuj: z
     .string().optional(),
   category: z.string({
@@ -56,7 +57,14 @@ const formSchema = z.object({
   ),
   role: z.string({
     required_error: "Please select a role.",
-  }),
+  }).min(1, {
+      message: "Please select a role.",
+    }),
+  category: z.string({
+    required_error: "Please select a category.",
+  }).min(1, {
+      message: "Please select a category.",
+    }),
   status: z.enum(["active", "inactive"], {
     required_error: "Please select a status.",
   }),
@@ -66,30 +74,31 @@ const formSchema = z.object({
   toDate: z.date({
     required_error: "Please select a to date.",
   }),
-  hashtags: z.string(),
+  hashtags: z.string().optional(),
   langCheck: z.array(z.string()),
-  // bodyEn: z.string().min(10, {
-  //   message: "English content must be at least 10 characters.",
-  // }),
+  bodyEn: z.string().min(10, {
+    message: "English content must be at least 10 characters.",
+  }),
   // bodyGuj: z.string().min(10, {
   //   message: "Gujarati content must be at least 10 characters.",
   // }),
   // bodyHi: z.string().min(10, {
   //   message: "Hindi content must be at least 10 characters.",
   // }),
-}).superRefine((input, refinementContext) => {
-  console.log({input})
-  const { URLs} = input;
-   if (URLs && URLs.length && !URLs.every((url) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(url))) {
-      return refinementContext.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Enter valid URLs separated by commas",
-        path: ['URLs'],
-      });
-    }
-  return true
-}
-)
+})
+// .superRefine((input, refinementContext) => {
+//   console.log({input})
+//   const { URLs} = input;
+//    if (URLs && URLs.length && !URLs.every((url) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(url))) {
+//       return refinementContext.addIssue({
+//         code: z.ZodIssueCode.custom,
+//         message: "Enter valid URLs separated by commas",
+//         path: ['URLs'],
+//       });
+//     }
+//     return true;
+// }
+// )
 
 export default function NewUserPage() {
   const router = useRouter()
@@ -104,7 +113,7 @@ export default function NewUserPage() {
       category: "",
       URLs: "",
       status: "active",
-      role: "",
+      role: "Editor",
       hashtags: "",
       bodyEn: "",
       bodyHi: "",
@@ -116,11 +125,11 @@ export default function NewUserPage() {
   })
 
   // Form submission handler
-  function onSubmit(values, publishStatus) {
+  async function onSubmit(values, publishStatus) {
     setIsSubmitting(true)
     const submissionData = {
       ...values,
-      publishStatus,
+      mode: publishStatus,
       hashtags: values?.hashtags?.split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0),
@@ -135,14 +144,16 @@ export default function NewUserPage() {
     }
 
     console.log("Submitting:", submissionData);
+    try {
+      await axios.post('/api/articles', submissionData)
+      router.push("/admin/articles")
 
+    } catch (error) {
+      console.error('Insert failed:', error);
+    }
     // Simulate API call
     setTimeout(() => {
-      setIsSubmitting(false)
-      // toast({
-      //   title: "User created",
-      //   description: `${values.name} has been created successfully.`,
-      // })
+      setIsSubmitting(false);
       router.push("/admin/articles")
     }, 1000)
   }
@@ -171,7 +182,6 @@ export default function NewUserPage() {
                               id={`lang-${lang.code}`}
                               checked={field.value.includes(lang.code)}
                               onCheckedChange={(checked) => {
-                                console.log(field, rest) // one late
                                 const updatedLangs = checked
                                   ? [...field.value, lang.code]
                                   : field.value.filter((langCode) => langCode !== lang.code)
@@ -399,8 +409,8 @@ export default function NewUserPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Admin">Admin</SelectItem>
                         <SelectItem value="Editor">Editor</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
                         <SelectItem value="Writer">Writer</SelectItem>
                       </SelectContent>
                     </Select>
