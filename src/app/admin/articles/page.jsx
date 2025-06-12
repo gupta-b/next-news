@@ -194,7 +194,7 @@ export default function ArticlesPage() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => router.push(`/dashboard/articles/${article.id}/edit`)}>
+              <DropdownMenuItem onClick={() => router.push(`/admin/articles/${article._id}/edit`)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>

@@ -34,7 +34,7 @@ export default function ClientHeader() {
           <span className="sr-only">Notifications</span>
         </Button>
         <nav className="flex items-center space-x-2">
-          {/* <button onClick={() => signIn("google")}>G-Login</button> */}
+          <button onClick={() => signIn("google")}>G-Login</button>
           <GoogleLogin />
           <Link href="/auth/signup">
             <Button size="sm">Sign Up</Button>

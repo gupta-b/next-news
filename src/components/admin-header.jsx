@@ -14,6 +14,7 @@ import {
 import { useSidebar } from "@/components/sidebar-provider"
 import { useTheme } from "@/components/theme-provider"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import GoogleLogin from "./GoogleLogin"
 
 export function Header() {
   const { toggle } = useSidebar()
@@ -43,9 +44,7 @@ export function Header() {
         </DropdownMenu>
         <nav className="flex items-center space-x-2">
           <Link href="/auth/login">
-            <Button variant="ghost" size="sm">
-              Login
-            </Button>
+           {/* <GoogleLogin /> */}
           </Link>
           <Link href="/auth/signup">
             <Button size="sm">Sign Up</Button>

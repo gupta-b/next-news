@@ -5,7 +5,7 @@ import Article from "@/models/Article"
 export async function GET(request) {
   try {
     await dbConnect()
-    console.log(request)
+
     const { searchParams } = new URL(request.url)
     const page = Number.parseInt(searchParams.get("page") || "1")
     const limit = Number.parseInt(searchParams.get("limit") || "2")
@@ -43,36 +43,3 @@ export async function GET(request) {
     return NextResponse.json({ error: "Failed to fetch articles" }, { status: 500 })
   }
 }
-
-export async function POST(request) {
-  try {
-    const body = await request.json()
-
-    const newArticle = {
-      titleEn: body.titleEn || "",
-      titleHi: body.titleHi || "",
-      titleGuj: body.titleGuj || "",
-      category: body.category || "",
-      URLs: body.URLs || [],
-      hashtags: body.hashtags || [],
-      langCheck: body.langCheck || ['en', 'hi', 'guj'],
-      status: body.status || "draft",
-      bodyEn: body.bodyEn || "",
-      bodyHi: body.bodyHi || "",
-      bodyGuj: body.bodyGuj || "",
-      category: body.category || "",
-      fromDate: body.fromDate || new Date(),
-      toDate: body.toDate || new Date(),
-    }
-
-    console.log(newArticle)
-    const result  = await Article.insertOne(newArticle);
-    console.log(result);
-    newArticle._id = result._id;
-    return NextResponse.json(result, { status: 201 })
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: "Failed to create article" }, { status: 500 })
-  }
-}
-
