@@ -1,7 +1,7 @@
 "use client"
 
-import { useState,useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useParams, useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -18,12 +18,11 @@ import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useSearchParams } from 'next/navigation'
 
-  const availableLanguages = [
-    { code: "en", name: "English", required: true },
-    { code: "hi", name: "Hindi" },
-    { code: "guj", name: "Gujarati" }];
+const availableLanguages = [
+  { code: "en", name: "English", required: true },
+  { code: "hi", name: "Hindi" },
+  { code: "guj", name: "Gujarati" }];
 
 // Form schema
 const formSchema = z.object({
@@ -55,17 +54,17 @@ const formSchema = z.object({
         .split(",")
         .map((url) => url.trim())
         .filter((url) => url !== "")
-  ),
+    ),
   role: z.string({
     required_error: "Please select a role.",
   }).min(1, {
-      message: "Please select a role.",
-    }),
+    message: "Please select a role.",
+  }),
   category: z.string({
     required_error: "Please select a category.",
   }).min(1, {
-      message: "Please select a category.",
-    }),
+    message: "Please select a category.",
+  }),
   status: z.enum(["active", "inactive"], {
     required_error: "Please select a status.",
   }),
@@ -101,46 +100,43 @@ const formSchema = z.object({
 // }
 // )
 
-export default function NewUserPage({params}) {
-
+export default function NewUserPage({ params }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { _id} = params;
-
-const searchParams = useSearchParams()   
-const search = searchParams.get('_id');
+  const { _id } = useParams()
+  
   useEffect(async () => {
     if (_id) {
-        try {
+      try {
         const article = await axios.get(`/api/articles/${_id}/edit`);
         const URLsString = Array.isArray(article.URLs) ? article.URLs.join(", ") : article.URLs || ""
         const hashtagsString = Array.isArray(article.hashtags) ? article.hashtags.join(", ") : article.hashtags || ""
         form.reset({
-            langCheck:["en", 'hi', 'guj'],
-            titleEn: article.titleEn,
-            titleGuj: article.titleGuj,
-            titleHi: article.titleHi,
-            category: article.category,
-            URLs: URLsString,
-            role: article.role,
-            status: article.status,
-            fromDate: new Date(article.fromDate),
-            toDate: new Date(article.toDate),
-            hashtags: hashtagsString,
-            bodyEn: article.bodyEn,
-            bodyHi: article.bodyHi || "",
-            bodyGuj: article.bodyGuj || "",
-          })
+          langCheck: ["en", 'hi', 'guj'],
+          titleEn: article.titleEn,
+          titleGuj: article.titleGuj,
+          titleHi: article.titleHi,
+          category: article.category,
+          URLs: URLsString,
+          role: article.role,
+          status: article.status,
+          fromDate: new Date(article.fromDate),
+          toDate: new Date(article.toDate),
+          hashtags: hashtagsString,
+          bodyEn: article.bodyEn,
+          bodyHi: article.bodyHi || "",
+          bodyGuj: article.bodyGuj || "",
+        })
       } catch (error) {
         const axiosError = error;
         console.log('\x1b[36m%s\x1b[0m', axiosError);
       } finally {
-        
+
       }
     }
-    return () => {}
-  }, [id]);
-  // Initialize form
+    return () => { }
+  }, [_id]);
+  
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -155,7 +151,7 @@ const search = searchParams.get('_id');
       bodyEn: "",
       bodyHi: "",
       bodyGuj: "",
-      langCheck:["en"],
+      langCheck: ["en"],
       fromDate: new Date(),
       toDate: new Date(),
     },
@@ -172,12 +168,12 @@ const search = searchParams.get('_id');
         .filter((tag) => tag.length > 0),
     }
     if (!values.langCheck.includes('hi')) {
-        submissionData.titleHi = values.titleEn;
-        submissionData.bodyHi = values.bodyEn;
+      submissionData.titleHi = values.titleEn;
+      submissionData.bodyHi = values.bodyEn;
     }
     if (!values.langCheck.includes('guj')) {
-        submissionData.titleGuj = values.titleEn;
-        submissionData.bodyGuj = values.bodyEn;
+      submissionData.titleGuj = values.titleEn;
+      submissionData.bodyGuj = values.bodyEn;
     }
 
     console.log("Submitting:", submissionData);
@@ -194,8 +190,8 @@ const search = searchParams.get('_id');
       router.push("/admin/articles")
     }, 1000)
   }
-// Handle language selection
-  
+  // Handle language selection
+
   const langSelected = form.watch("langCheck");
   return (
     <Card>
@@ -205,41 +201,41 @@ const search = searchParams.get('_id');
       <CardContent>
         <Form {...form}>
           <form className="space-y-6">
-           <FormField
-                control={form.control}
-                name="langCheck"
-                render={({ field, ...rest }) => (
-                  <FormItem className="space-y-4">
-                    <FormLabel className="text-base font-medium">Languages of Interest</FormLabel>
-                    <FormControl>
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-4 border rounded-md bg-muted/50">
-                        {availableLanguages.map((lang) => (
-                          <div key={lang.code} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`lang-${lang.code}`}
-                              checked={field.value.includes(lang.code)}
-                              onCheckedChange={(checked) => {
-                                const updatedLangs = checked
-                                  ? [...field.value, lang.code]
-                                  : field.value.filter((langCode) => langCode !== lang.code)
+            <FormField
+              control={form.control}
+              name="langCheck"
+              render={({ field, ...rest }) => (
+                <FormItem className="space-y-4">
+                  <FormLabel className="text-base font-medium">Languages of Interest</FormLabel>
+                  <FormControl>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-4 border rounded-md bg-muted/50">
+                      {availableLanguages.map((lang) => (
+                        <div key={lang.code} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`lang-${lang.code}`}
+                            checked={field.value.includes(lang.code)}
+                            onCheckedChange={(checked) => {
+                              const updatedLangs = checked
+                                ? [...field.value, lang.code]
+                                : field.value.filter((langCode) => langCode !== lang.code)
 
-                                field.onChange(updatedLangs)
-                              }}
-                            />
-                            <label htmlFor={`lang-${lang.code}`} className="text-sm font-normal cursor-pointer">
-                              {lang.name}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </FormControl>
-                    <FormDescription>
-                      Select the languages for article's content.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                              field.onChange(updatedLangs)
+                            }}
+                          />
+                          <label htmlFor={`lang-${lang.code}`} className="text-sm font-normal cursor-pointer">
+                            {lang.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Select the languages for article's content.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -255,49 +251,49 @@ const search = searchParams.get('_id');
                   </FormItem>
                 )}
               />
-               {
-              langSelected.includes('hi') ?
-              <FormField
-                control={form.control}
-                name="titleHi"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title (Hi)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter article title" {...field} />
-                    </FormControl>
-                    <FormDescription>Article title Hindi (5-100 characters)</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> :
-              ''
-            }
-             {
-              langSelected.includes('guj') ?
-              <FormField
-                control={form.control}
-                name="titleGuj"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title (Guj)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter article title" {...field} />
-                    </FormControl>
-                    <FormDescription>Article title Gujarati (5-100 characters)</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> :
-              ''
+              {
+                langSelected.includes('hi') ?
+                  <FormField
+                    control={form.control}
+                    name="titleHi"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title (Hi)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter article title" {...field} />
+                        </FormControl>
+                        <FormDescription>Article title Hindi (5-100 characters)</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  /> :
+                  ''
               }
-              
-              
+              {
+                langSelected.includes('guj') ?
+                  <FormField
+                    control={form.control}
+                    name="titleGuj"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title (Guj)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter article title" {...field} />
+                        </FormControl>
+                        <FormDescription>Article title Gujarati (5-100 characters)</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  /> :
+                  ''
+              }
+
+
             </div>
 
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
+
               <FormField
                 control={form.control}
                 name="category"
@@ -500,48 +496,48 @@ const search = searchParams.get('_id');
               )}
             />
             {
-              langSelected.includes('hi') ? 
+              langSelected.includes('hi') ?
                 <FormField
-                control={form.control}
-                name="bodyHi"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content (Hindi) - Optional</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Write your article content in Hindi..."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>Article content in Hindi (optional)</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              : ''
+                  control={form.control}
+                  name="bodyHi"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content (Hindi) - Optional</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Write your article content in Hindi..."
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Article content in Hindi (optional)</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                : ''
             }
             {
               langSelected.includes('guj') ?
-               <FormField
-                control={form.control}
-                name="bodyGuj"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content (Gujarati) - Optional</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Write your article content in Gujarati..."
-                        className="min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>Article content in Gujarati (optional)</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> :
-              ''
+                <FormField
+                  control={form.control}
+                  name="bodyGuj"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content (Gujarati) - Optional</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Write your article content in Gujarati..."
+                          className="min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Article content in Gujarati (optional)</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> :
+                ''
             }
 
             <div className="flex items-center justify-between gap-4 pt-6 border-t">
