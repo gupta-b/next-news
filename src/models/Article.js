@@ -30,14 +30,15 @@ const ArticleSchema = new Schema(
     bodyHi: { type: String, required: true },
     bodyGuj: { type: String, required: true },
     category: { type: String, required: true },
+    role: { type: String, required: true },
     fromDate: { type: String, required: true },
     fromDate: { type: Date, required: true, default: Date.now },
     toDate: { type: Date, required: true, default: Date.now },
     trendingRank: { type: Number },
   },
-  // {
-  //   timestamps: true,
-  // },
+  {
+    timestamps: true,
+  }
 )
 
 // Prevent multiple models from being created

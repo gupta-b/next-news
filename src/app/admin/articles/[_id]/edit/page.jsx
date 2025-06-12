@@ -1,6 +1,6 @@
 "use client"
 
-import { useState,useEffect } from "react"
+import { useState,useEffect, use } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -105,41 +105,48 @@ export default function NewUserPage({params}) {
 
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { _id} = params;
+  const { _id } = use(params);
 
-const searchParams = useSearchParams()   
-const search = searchParams.get('_id');
-  useEffect(async () => {
-    if (_id) {
-        try {
-        const article = await axios.get(`/api/articles/${_id}/edit`);
-        const URLsString = Array.isArray(article.URLs) ? article.URLs.join(", ") : article.URLs || ""
-        const hashtagsString = Array.isArray(article.hashtags) ? article.hashtags.join(", ") : article.hashtags || ""
+// const searchParams = useSearchParams()   
+// const search = searchParams.get('_id');
+  useEffect(() => {
+    const fetchSelectedData = async() => {
+
+      try {
+      const article = await axios.get(`/api/articles/${_id}`);
+      if (article && article.data) {
+        const {data} = article;
+        const URLsString = Array.isArray(data.URLs) ? data.URLs.join(", ") : data.URLs || ""
+        const hashtagsString = Array.isArray(data.hashtags) ? data.hashtags.join(", ") : data.hashtags || ""
         form.reset({
             langCheck:["en", 'hi', 'guj'],
-            titleEn: article.titleEn,
-            titleGuj: article.titleGuj,
-            titleHi: article.titleHi,
-            category: article.category,
+            titleEn: data.titleEn,
+            titleGuj: data.titleGuj,
+            titleHi: data.titleHi,
+            category: data.category,
             URLs: URLsString,
-            role: article.role,
-            status: article.status,
-            fromDate: new Date(article.fromDate),
-            toDate: new Date(article.toDate),
+            role: data.role,
+            status: data.status,
+            fromDate: new Date(data.fromDate),
+            toDate: new Date(data.toDate),
             hashtags: hashtagsString,
-            bodyEn: article.bodyEn,
-            bodyHi: article.bodyHi || "",
-            bodyGuj: article.bodyGuj || "",
+            bodyEn: data.bodyEn,
+            bodyHi: data.bodyHi || "",
+            bodyGuj: data.bodyGuj || "",
           })
-      } catch (error) {
-        const axiosError = error;
-        console.log('\x1b[36m%s\x1b[0m', axiosError);
-      } finally {
-        
       }
+    } catch (error) {
+      const axiosError = error;
+      console.log('\x1b[36m%s\x1b[0m', axiosError);
+    } finally {
+      
     }
-    return () => {}
-  }, [id]);
+    } 
+    if (_id) {
+      fetchSelectedData();
+    }
+    // return () => {}
+  }, [_id]);
   // Initialize form
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -164,6 +171,7 @@ const search = searchParams.get('_id');
   // Form submission handler
   async function onSubmit(values, publishStatus) {
     setIsSubmitting(true)
+    console.log({values})
     const submissionData = {
       ...values,
       mode: publishStatus,
@@ -182,7 +190,7 @@ const search = searchParams.get('_id');
 
     console.log("Submitting:", submissionData);
     try {
-      await axios.post(`/api/articles/${_id}/edit`, submissionData)
+      await axios.put(`/api/articles/${_id}`, submissionData)
       router.push("/admin/articles")
 
     } catch (error) {
@@ -304,7 +312,7 @@ const search = searchParams.get('_id');
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a category" />
@@ -350,7 +358,7 @@ const search = searchParams.get('_id');
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          defaultValue={new Date()}
+                          // value={field.value}
                           disabled={(date) => date < new Date()}
                           initialFocus
                         />
@@ -439,7 +447,7 @@ const search = searchParams.get('_id');
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Author Role</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select author role" />
@@ -463,7 +471,7 @@ const search = searchParams.get('_id');
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />

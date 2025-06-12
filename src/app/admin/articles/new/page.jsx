@@ -60,11 +60,6 @@ const formSchema = z.object({
   }).min(1, {
       message: "Please select a role.",
     }),
-  category: z.string({
-    required_error: "Please select a category.",
-  }).min(1, {
-      message: "Please select a category.",
-    }),
   status: z.enum(["active", "inactive"], {
     required_error: "Please select a status.",
   }),
@@ -112,8 +107,8 @@ export default function NewUserPage() {
       titleHi: "",
       category: "",
       URLs: "",
-      status: "active",
-      role: "Editor",
+      status: "",
+      role: "",
       hashtags: "",
       bodyEn: "",
       bodyHi: "",

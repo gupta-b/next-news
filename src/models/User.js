@@ -63,6 +63,9 @@ const UserSchema = new mongoose.Schema({
     default: true,
   },
   messages: [MessageSchema],
+},
+{
+  timestamps: true
 });
 
 const UserModel =
