@@ -100,43 +100,50 @@ const formSchema = z.object({
 // }
 // )
 
-export default function NewUserPage({ params }) {
+export default function NewUserPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { _id } = useParams()
-  
-  useEffect(async () => {
-    if (_id) {
-      try {
-        const article = await axios.get(`/api/articles/${_id}/edit`);
-        const URLsString = Array.isArray(article.URLs) ? article.URLs.join(", ") : article.URLs || ""
-        const hashtagsString = Array.isArray(article.hashtags) ? article.hashtags.join(", ") : article.hashtags || ""
-        form.reset({
-          langCheck: ["en", 'hi', 'guj'],
-          titleEn: article.titleEn,
-          titleGuj: article.titleGuj,
-          titleHi: article.titleHi,
-          category: article.category,
-          URLs: URLsString,
-          role: article.role,
-          status: article.status,
-          fromDate: new Date(article.fromDate),
-          toDate: new Date(article.toDate),
-          hashtags: hashtagsString,
-          bodyEn: article.bodyEn,
-          bodyHi: article.bodyHi || "",
-          bodyGuj: article.bodyGuj || "",
-        })
-      } catch (error) {
-        const axiosError = error;
-        console.log('\x1b[36m%s\x1b[0m', axiosError);
-      } finally {
+  const { id } = useParams()
 
-      }
+  const fetchArticle = async () => {
+    try {
+      const response = await axios.get(`/api/articles/${id}/edit`);
+      const article = response.data;
+
+      const URLsString = Array.isArray(article.URLs)
+        ? article.URLs.join(", ")
+        : article.URLs || "";
+
+      const hashtagsString = Array.isArray(article.hashtags)
+        ? article.hashtags.join(", ")
+        : article.hashtags || "";
+
+      form.reset({
+        langCheck: ["en", "hi", "guj"],
+        titleEn: article.titleEn,
+        titleGuj: article.titleGuj,
+        titleHi: article.titleHi,
+        category: article.category,
+        URLs: URLsString,
+        role: article.role,
+        status: article.status,
+        fromDate: new Date(article.fromDate),
+        toDate: new Date(article.toDate),
+        hashtags: hashtagsString,
+        bodyEn: article.bodyEn,
+        bodyHi: article.bodyHi || "",
+        bodyGuj: article.bodyGuj || "",
+      });
+    } catch (error) {
+      console.error("Failed to fetch article:", error);
     }
-    return () => { }
-  }, [_id]);
-  
+  };
+
+  useEffect(() => {
+    if (!id) return;
+    fetchArticle();
+  }, [id]);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -176,7 +183,6 @@ export default function NewUserPage({ params }) {
       submissionData.bodyGuj = values.bodyEn;
     }
 
-    console.log("Submitting:", submissionData);
     try {
       await axios.post(`/api/articles/${_id}/edit`, submissionData)
       router.push("/admin/articles")
@@ -326,7 +332,7 @@ export default function NewUserPage({ params }) {
               <FormField
                 control={form.control}
                 name="fromDate"
-                render={({ field }) => (
+                render={({ field }) => console.log({ field }) || (
                   <FormItem className="flex flex-col">
                     <FormLabel>From Date</FormLabel>
                     <Popover>
@@ -336,20 +342,20 @@ export default function NewUserPage({ params }) {
                             variant={"outline"}
                             className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                            {/* {field.value ? format(field.value, "PPP") : <span>Pick a date</span>} */}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
+                        {/* <Calendar
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
                           defaultValue={new Date()}
                           disabled={(date) => date < new Date()}
                           initialFocus
-                        />
+                        /> */}
                       </PopoverContent>
                     </Popover>
                     <FormDescription>Article publication start date</FormDescription>
@@ -371,7 +377,8 @@ export default function NewUserPage({ params }) {
                             variant={"outline"}
                             className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                           >
-                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                            {console.log(field?.value) }
+                            {/* {console.log(field?.value) || field?.value ? format(field?.value, "PPP") : <span>Pick a date</span>} */}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>

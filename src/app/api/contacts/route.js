@@ -34,7 +34,7 @@ export async function GET(request) {
         total,
         page,
         limit,
-        hasMore: (page !== pages),
+        hasMore: (page !== pages && total),
         pages
       },
     })

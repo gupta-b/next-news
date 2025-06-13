@@ -24,7 +24,7 @@ const dashBoardReducer = (state, action) => {
     default:
       return state;
   }
-};
+};;
 const initialObj = {
   "user": {
     page: 0,
@@ -37,6 +37,7 @@ const initialObj = {
      list: []
     }
 };
+
 
 export {
   initialObj,
